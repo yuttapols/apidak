@@ -36,6 +36,9 @@ public class LoginEntity {
 	@Column(name = "status")
 	private String status;
 	
+	@Column(name = "login_fail")
+	private Integer loginFail;
+	
 	@Column(name = "create_by")
 	private String createBy;
 	

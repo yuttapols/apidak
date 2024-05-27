@@ -1,9 +1,5 @@
 package com.ws.apidak.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +20,12 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 	
-	@GetMapping("/findByUserName")
-	public ApiResponse findByUserName(HttpServletRequest request ,@RequestParam(name = "userName") String userName) {
+	@GetMapping("/authen")
+	public ApiResponse findByUserName(HttpServletRequest request , @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
 		
 		LoginResponseDto dataResponse = new LoginResponseDto();
 		try {
-			dataResponse = loginService.findByUserName(userName);
+			dataResponse = loginService.findByUserNameAndPassword(userName, password);
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseUtils.getErrorResponse(e.getMessage());
@@ -38,15 +34,4 @@ public class LoginController {
 		return ResponseUtils.getOkResponse(dataResponse);
 	}
 	
-	@GetMapping("/findAll")
-	public ApiResponse findAll() {
-		List<LoginResponseDto> dataResponse = new ArrayList<>();
-		try {
-			dataResponse = loginService.findAll();
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResponseUtils.getErrorResponse(e.getMessage());
-		}
-		return ResponseUtils.getOkResponse(dataResponse);
-	}
 }

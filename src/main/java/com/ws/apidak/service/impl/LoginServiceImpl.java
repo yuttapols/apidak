@@ -1,9 +1,5 @@
 package com.ws.apidak.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,18 +20,38 @@ public class LoginServiceImpl implements LoginService{
 	 private ModelMapper modelMapper;
 	
 	@Override
-	public LoginResponseDto findByUserName(String userName) throws Exception {
+	public LoginResponseDto findByUserNameAndPassword(String userName, String password) throws Exception {
 
-		LoginEntity entity = loginRepository.findByUserName(userName);
-		return null != entity ?this.userEntityToUserRespDto(loginRepository.findByUserName(userName)) : null;
+		LoginEntity entity = loginRepository.findByUserNameAndPassword(userName, password);
+		LoginResponseDto response = null;
+		if(null != entity) {
+			response = this.userEntityToUserRespDto(entity);
+			
+			entity.setLoginFail(0);
+			loginRepository.save(entity);
+		}else {
+			LoginEntity entityCheck = loginRepository.findByUserName(userName);
+			if(null != entityCheck) {
+				
+				int loginFail = entityCheck.getLoginFail();
+				if(loginFail == 3) {
+					entityCheck.setStatus("2");
+					entityCheck.setLoginFail(0);
+				}else {
+					entityCheck.setLoginFail(entityCheck.getLoginFail() + 1);
+				}
+				
+				loginRepository.save(entityCheck);
+				response = new LoginResponseDto();
+				response.setStatus(entityCheck.getStatus());
+				response.setLoginFail(entityCheck.getLoginFail());;
+			}
+		}
+		
+		
+		return response;
 	}
 
-	@Override
-	public List<LoginResponseDto> findAll() throws Exception {
-		List<LoginEntity> entitys =  loginRepository.findAll();
-
-		return CollectionUtils.isNotEmpty(entitys) ? entitys.stream().map(m-> this.userEntityToUserRespDto(m)).collect(Collectors.toList()) : null;
-	}
 	
 	 public LoginEntity userReqDtoToUserEntity(LoginResponseDto loginDto){
         return this.modelMapper.map(loginDto,LoginEntity.class);

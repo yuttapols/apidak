@@ -14,6 +14,7 @@ public class LoginResponseDto{
 	private String password;
 	private Integer roleId;
 	private String status;
+	private Integer loginFail;
 	private String createBy;
 	private Timestamp createDate;
 	private String updateBy;
