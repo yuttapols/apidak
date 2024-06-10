@@ -1,4 +1,4 @@
-package com.ws.apidak.config;
+package com.it.rmu.config;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

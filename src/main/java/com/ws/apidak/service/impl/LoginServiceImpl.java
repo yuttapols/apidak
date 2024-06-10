@@ -1,5 +1,7 @@
 package com.ws.apidak.service.impl;
 
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,9 @@ public class LoginServiceImpl implements LoginService{
 					entityCheck.setStatus("2");
 					entityCheck.setLoginFail(0);
 				}else {
-					entityCheck.setLoginFail(entityCheck.getLoginFail() + 1);
+					if("1".equals(entityCheck.getStatus())) {
+						entityCheck.setLoginFail(entityCheck.getLoginFail() + 1);
+					}
 				}
 				
 				loginRepository.save(entityCheck);
@@ -52,8 +56,19 @@ public class LoginServiceImpl implements LoginService{
 		return response;
 	}
 
+	@Override
+	public LoginResponseDto findById(Long userId) throws Exception {
+		Optional<LoginEntity>  entity = loginRepository.findById(userId);
+		LoginResponseDto response = null;
+		if(entity.isPresent()) {
+			LoginEntity loginEntity = entity.get();
+			response = this.userEntityToUserRespDto(loginEntity);
+		}
+		return response;
+	}
 	
-	 public LoginEntity userReqDtoToUserEntity(LoginResponseDto loginDto){
+	// *** set Map
+	public LoginEntity userReqDtoToUserEntity(LoginResponseDto loginDto){
         return this.modelMapper.map(loginDto,LoginEntity.class);
     }
     public LoginResponseDto userEntityToUserRespDto(LoginEntity entity){

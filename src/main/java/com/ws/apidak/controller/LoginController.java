@@ -34,4 +34,17 @@ public class LoginController {
 		return ResponseUtils.getOkResponse(dataResponse);
 	}
 	
+	@GetMapping("/findByUserId")
+	public ApiResponse findByUserId(HttpServletRequest request , @RequestParam(name = "userId") Long userId) {
+		LoginResponseDto dataResponse = new LoginResponseDto();
+		try {
+			dataResponse = loginService.findById(userId);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseUtils.getErrorResponse(e.getMessage());
+		}
+
+		return ResponseUtils.getOkResponse(dataResponse);
+	}
+	
 }
